@@ -3,29 +3,10 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectItem,
-  SelectContent,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  ShoppingCart,
-  Trash2,
-  RefreshCw,
-  PlusCircle,
-  CheckCircle2,
-  ArrowRight,
-} from "lucide-react";
-import {
-  GiShinyApple,
-  GiGrapes,
-  GiLemon,
-  GiStrawberry,
-  GiCherry,
-} from "react-icons/gi";
-import { PiOrange } from "react-icons/pi";
+import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ShoppingCart, Trash2, RefreshCw, PlusCircle, CheckCircle2, ArrowRight } from "lucide-react";
+import { GiShinyApple, GiGrapes, GiLemon, GiStrawberry, GiCherry } from "react-icons/gi";
+import { PiOrangeFill } from "react-icons/pi";
 import { toast } from "@/hooks/use-toast";
 
 // Types
@@ -64,7 +45,7 @@ const fruitAndPrices: Fruit[] = [
   {
     id: "Orange",
     name: "Orange",
-    icon: <PiOrange className="text-orange-500" size={24} />,
+    icon: <PiOrangeFill className="text-orange-500" size={24} />,
     price: 150.0,
     bgColor: "bg-orange-50",
     borderColor: "border-orange-200",
