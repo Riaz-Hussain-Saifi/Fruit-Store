@@ -92,7 +92,6 @@ const fruitAndPrices: Fruit[] = [
 // Components
 const FruitSelector = ({
   onFruitChange,
-  selectedFruit,
 }: {
   onFruitChange: (value: string) => void;
   selectedFruit: Fruit | null;
