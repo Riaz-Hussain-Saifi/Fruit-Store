@@ -92,19 +92,24 @@ const fruitAndPrices: Fruit[] = [
 // Components
 const FruitSelector = ({
   onFruitChange,
+  selectedFruit,
 }: {
   onFruitChange: (value: string) => void;
   selectedFruit: Fruit | null;
 }) => (
   <div className="space-y-2">
     <Label className="text-sm font-medium text-purple-700">Select Fruit</Label>
-    <Select onValueChange={onFruitChange}>
-      <SelectTrigger className="border-purple-200 hover:border-purple-300">
+    <Select onValueChange={onFruitChange} value={selectedFruit?.id}>
+      <SelectTrigger className="text-lg border-purple-200 hover:border-purple-300 transition-colors">
         <SelectValue placeholder="Choose a fruit" />
       </SelectTrigger>
       <SelectContent>
         {fruitAndPrices.map((fruit) => (
-          <SelectItem key={fruit.id} value={fruit.id} className="flex items-center">
+          <SelectItem 
+            key={fruit.id} 
+            value={fruit.id} 
+            className={`${fruit.bgColor} ${fruit.borderColor} ${fruit.hoverColor} text-lg flex items-center transition-colors`}
+          >
             <div className="flex items-center space-x-2">
               {fruit.icon}
               <span>{fruit.name}</span>
@@ -130,50 +135,56 @@ const OrderList = ({
   totalPrice: number;
 }) => (
   <div className="space-y-3">
-    {orders.map((order) => (
-      <div
-        key={order.id}
-        className={`flex justify-between items-center border rounded-lg p-3 transition-colors ${order.borderColor} ${order.bgColor} ${order.hoverColor}`}
-      >
-        <div className="flex items-center space-x-2">
-          <span className="font-medium flex gap-1">
-            {order.quantity}KG {order.name}
-            {order.icon}
-          </span>
+    <div className="max-h-[400px] overflow-y-auto pr-2 space-y-3">
+      {orders.map((order) => (
+        <div
+          key={order.id}
+          className={`flex justify-between items-center border rounded-lg p-3 transition-all transform hover:scale-[1.02] ${order.borderColor} ${order.bgColor} ${order.hoverColor}`}
+        >
+          <div className="flex items-center space-x-2">
+            <span className="font-medium flex items-center gap-2">
+              {order.quantity}KG {order.name}
+              {order.icon}
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-purple-700 font-semibold">
+              PK {order.price.toFixed(2)}
+            </span>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => onDeleteOrder(order.id)}
+              className="h-8 w-8 p-0 bg-red-500 hover:bg-red-600 transition-colors"
+            >
+              <Trash2 size={16} />
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-purple-700 font-semibold">
-            PK {order.price.toFixed(2)}
-          </span>
-          <Button
-            size="sm"
-            variant="destructive"
-            onClick={() => onDeleteOrder(order.id)}
-            className="h-8 w-8 p-0 bg-red-500 hover:bg-red-600"
-          >
-            <Trash2 size={16} />
-          </Button>
-        </div>
-      </div>
-    ))}
+      ))}
+    </div>
 
     <div className="mt-4 pt-4 border-t border-purple-100">
-      <div className="flex justify-between text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4">
-        <span>Total Amount:</span>
-        <span>PK {totalPrice.toFixed(2)}</span>
+      <div className="flex justify-between text-lg font-semibold mb-4">
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+          Total Amount:
+        </span>
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+          PK {totalPrice.toFixed(2)}
+        </span>
       </div>
 
       <div className="space-y-3">
         <Button
           variant="outline"
-          className="w-full border-purple-200 text-purple-700 hover:bg-purple-50"
+          className="w-full border-purple-200 text-purple-700 hover:bg-purple-50 transition-colors"
           onClick={onResetOrders}
         >
           <RefreshCw className="mr-2" size={18} />
           Reset All Orders
         </Button>
         <Button
-          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+          className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all"
           onClick={onProceedOrder}
         >
           <CheckCircle2 className="mr-2" size={18} />
@@ -185,7 +196,6 @@ const OrderList = ({
   </div>
 );
 
-// Main Component
 export default function Home() {
   const [selectedFruit, setSelectedFruit] = useState<Fruit | null>(null);
   const [quantity, setQuantity] = useState(1);
@@ -284,93 +294,99 @@ export default function Home() {
   const calculateTotalOrderPrice = () => orders.reduce((sum, order) => sum + order.price, 0);
 
   return (
-    <div className="flex flex-col lg:flex-row items-start justify-center min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 gap-6">
-      {/* Fruit Selection Form */}
-      <div className="w-full max-w-md p-6 bg-white shadow-xl rounded-xl mb-6 lg:mb-0 border border-purple-100 backdrop-blur-sm backdrop-filter">
-        <div className="flex items-center justify-center mb-6">
-          <ShoppingCart className="text-purple-600 mr-2" size={24} />
-          <h1 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
-            Fruit Selector
-          </h1>
-        </div>
+    // Main div is here
+    <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col lg:flex-row items-start justify-center gap-6">
+          {/* Fruit Selection Form */}
+          <div className="w-full max-w-md p-6 bg-white/90 shadow-xl rounded-xl border border-purple-100 backdrop-blur-sm">
+            <div className="flex items-center justify-center mb-6">
+              <ShoppingCart className="text-purple-600 mr-2" size={24} />
+              <h1 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+                Fruit Selector
+              </h1>
+            </div>
 
-        <div className="space-y-4">
-          <FruitSelector onFruitChange={handleFruitChange} selectedFruit={selectedFruit} />
+            <div className="space-y-4">
+              <FruitSelector onFruitChange={handleFruitChange} selectedFruit={selectedFruit} />
 
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-purple-700">Quantity</Label>
-            <Input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => handleQuantityChange(Number(e.target.value))}
-              className="w-full px-3 py-2 border border-purple-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            />
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-purple-700">Quantity (KG)</Label>
+                <Input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => handleQuantityChange(Number(e.target.value))}
+                  className="w-full px-3 py-2 border border-purple-200 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
+                {selectedFruit ? (
+                  <div className="flex items-center justify-between text-purple-800">
+                    <div className="flex items-center gap-2">
+                      {selectedFruit.icon}
+                      <span>Total Price:</span>
+                    </div>
+                    <strong className="text-lg">PK {totalPrice.toFixed(2)}</strong>
+                  </div>
+                ) : (
+                  <p className="text-purple-600 text-center">Select a fruit to see the total price</p>
+                )}
+              </div>
+
+              <div className="flex justify-between mt-6 gap-3">
+                <Button
+                  onClick={handleOrder}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all"
+                >
+                  <PlusCircle className="mr-2" size={18} />
+                  Add Order
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={resetForm}
+                  className="flex-1 border-purple-200 text-purple-700 hover:bg-purple-50 transition-colors"
+                >
+                  <RefreshCw className="mr-2" size={18} />
+                  Reset
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-100">
-            {selectedFruit ? (
-              <div className="flex items-center justify-between text-purple-800">
-                <div className="flex items-center gap-2">
-                  {selectedFruit.icon}
-                  <span>Total Price:</span>
-                </div>
-                <strong className="text-lg">PK {totalPrice.toFixed(2)}</strong>
+          {/* Order List */}
+          <div className="w-full max-w-lg bg-white/90 p-6 shadow-xl rounded-xl border border-purple-100 backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 flex items-center">
+                <ShoppingCart className="mr-2 text-purple-600" size={20} />
+                Order List
+              </h2>
+              {orders.length > 0 && (
+                <span className="text-sm bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full">
+                  {orders.length} items
+                </span>
+              )}
+            </div>
+
+            {orders.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <ShoppingCart className="mx-auto mb-3 text-gray-400" size={48} />
+                <p>No orders yet. Start adding some!</p>
               </div>
             ) : (
-              <p className="text-purple-600 text-center">Select a fruit to see the total price</p>
+              <OrderList
+                orders={orders}
+                onDeleteOrder={handleDeleteOrder}
+                onResetOrders={resetOrders}
+                onProceedOrder={handleProceedOrder}
+                totalPrice={calculateTotalOrderPrice()}
+              />
             )}
           </div>
-
-          <div className="flex justify-between mt-6 gap-3">
-            <Button
-              onClick={handleOrder}
-              className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
-            >
-              <PlusCircle className="mr-2" size={18} />
-              Add Order
-            </Button>
-            <Button
-              variant="outline"
-              onClick={resetForm}
-              className="flex-1 border-purple-200 text-purple-700 hover:bg-purple-50"
-            >
-              <RefreshCw className="mr-2" size={18} />
-              Reset
-            </Button>
-          </div>
         </div>
       </div>
-
-      {/* Order List */}
-      <div className="w-full max-w-lg bg-white p-6 shadow-xl rounded-xl border border-purple-100 backdrop-blur-sm backdrop-filter">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 flex items-center">
-            <ShoppingCart className="mr-2 text-purple-600" size={20} />
-            Order List
-          </h2>
-          {orders.length > 0 && (
-            <span className="text-sm bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 px-3 py-1 rounded-full">
-              {orders.length} items
-            </span>
-          )}
-        </div>
-
-        {orders.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <ShoppingCart className="mx-auto mb-3 text-gray-400" size={48} />
-            <p>No orders yet. Start adding some!</p>
-          </div>
-        ) : (
-          <OrderList
-            orders={orders}
-            onDeleteOrder={handleDeleteOrder}
-            onResetOrders={resetOrders}
-            onProceedOrder={handleProceedOrder}
-            totalPrice={calculateTotalOrderPrice()}
-          />
-        )}
-      </div>
-    </div>
-  );
+      {/* <ToastContainer position="top-right" autoClose={5000} /> */}
+    </main>
+    )
 }
