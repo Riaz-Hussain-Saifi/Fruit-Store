@@ -1,16 +1,33 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShoppingCart, Trash2, RefreshCw, PlusCircle, CheckCircle2, ArrowRight } from "lucide-react";
-import { GiShinyApple, GiGrapes, GiLemon, GiStrawberry, GiCherry } from "react-icons/gi";
+import { 
+  Select, 
+  SelectItem, 
+  SelectContent, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { 
+  ShoppingCart, 
+  Trash2, 
+  RefreshCw, 
+  PlusCircle, 
+  CheckCircle2, 
+  ArrowRight, 
+  Apple, 
+  Grape, 
+  Cherry 
+} from "lucide-react";
+import { GiLemon, GiStrawberry } from "react-icons/gi";
 import { PiOrangeFill } from "react-icons/pi";
-import { toast } from "@/hooks/use-toast";
+import { toast } from 'react-toastify';
+
 
 // Types
-type Fruit = {
+interface Fruit {
   id: string;
   name: string;
   icon: JSX.Element;
@@ -18,9 +35,9 @@ type Fruit = {
   bgColor: string;
   borderColor: string;
   hoverColor: string;
-};
+}
 
-type Order = {
+interface Order {
   id: number;
   name: string;
   icon: JSX.Element;
@@ -29,14 +46,14 @@ type Order = {
   bgColor: string;
   borderColor: string;
   hoverColor: string;
-};
+}
 
 // Constants
 const fruitAndPrices: Fruit[] = [
   {
     id: "Apple",
     name: "Apple",
-    icon: <GiShinyApple className="text-red-500" size={24} />,
+    icon: <Apple className="text-red-500" size={24} />,
     price: 200.0,
     bgColor: "bg-red-50",
     borderColor: "border-red-200",
@@ -63,7 +80,7 @@ const fruitAndPrices: Fruit[] = [
   {
     id: "Grapes",
     name: "Grapes",
-    icon: <GiGrapes className="text-purple-500" size={24} />,
+    icon: <Grape className="text-purple-500" size={24} />,
     price: 250.0,
     bgColor: "bg-purple-50",
     borderColor: "border-purple-200",
@@ -81,7 +98,7 @@ const fruitAndPrices: Fruit[] = [
   {
     id: "Cherry",
     name: "Cherry",
-    icon: <GiCherry className="text-red-600" size={24} />,
+    icon: <Cherry className="text-red-600" size={24} />,
     price: 120.0,
     bgColor: "bg-red-50",
     borderColor: "border-red-200",
@@ -196,7 +213,7 @@ const OrderList = ({
   </div>
 );
 
-export default function Home() {
+export default function FruitSelectorApp() {
   const [selectedFruit, setSelectedFruit] = useState<Fruit | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -204,11 +221,7 @@ export default function Home() {
 
   const handleOrder = () => {
     if (!selectedFruit) {
-      toast({
-        title: "Error",
-        description: "Please select a fruit first",
-        variant: "destructive",
-      });
+      toast.warning("Please select a fruit first");
       return;
     }
 
@@ -224,18 +237,12 @@ export default function Home() {
     };
     setOrders([...orders, newOrder]);
     resetForm();
-    toast({
-      title: "Success",
-      description: "Order added successfully",
-    });
+    toast.success("Order added successfully");
   };
 
   const handleDeleteOrder = (orderId: number) => {
     setOrders(orders.filter((order) => order.id !== orderId));
-    toast({
-      title: "Order Deleted",
-      description: "Order has been removed from the list",
-    });
+    toast.info(`Order has been removed from the list`);
   };
 
   const resetForm = () => {
@@ -247,10 +254,7 @@ export default function Home() {
   const resetOrders = () => {
     setOrders([]);
     resetForm();
-    toast({
-      title: "Reset Complete",
-      description: "All orders have been cleared",
-    });
+    toast.info(`All orders have been removed from the list`);
   };
 
   const handleFruitChange = (value: string) => {
@@ -261,11 +265,7 @@ export default function Home() {
 
   const handleQuantityChange = (value: number) => {
     if (value < 1) {
-      toast({
-        title: "Invalid Quantity",
-        description: "Quantity must be at least 1",
-        variant: "destructive",
-      });
+      toast.warning("Quantity must be at least 1");
       return;
     }
     setQuantity(value);
@@ -276,17 +276,10 @@ export default function Home() {
 
   const handleProceedOrder = () => {
     if (orders.length === 0) {
-      toast({
-        title: "No Orders",
-        description: "Please add some items to your order first",
-        variant: "destructive",
-      });
+      toast.error("Please add some items to your order first");
       return;
     }
-    toast({
-      title: "Order Processed",
-      description: `Successfully processed ${orders.length} items`,
-    });
+    toast.success(`Successfully processed ${orders.length} items`);
     console.log("Orders:", orders);
     resetOrders();
   };
@@ -294,7 +287,6 @@ export default function Home() {
   const calculateTotalOrderPrice = () => orders.reduce((sum, order) => sum + order.price, 0);
 
   return (
-    // Main div is here
     <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col lg:flex-row items-start justify-center gap-6">
@@ -308,7 +300,10 @@ export default function Home() {
             </div>
 
             <div className="space-y-4">
-              <FruitSelector onFruitChange={handleFruitChange} selectedFruit={selectedFruit} />
+              <FruitSelector 
+                onFruitChange={handleFruitChange} 
+                selectedFruit={selectedFruit} 
+              />
 
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-purple-700">Quantity (KG)</Label>
@@ -386,7 +381,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* <ToastContainer position="top-right" autoClose={5000} /> */}
     </main>
-    )
+  );
 }
